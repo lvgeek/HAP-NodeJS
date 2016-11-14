@@ -98,11 +98,11 @@ outlet
     var err = null; // in case there were any problems
 
     if (CHRISTMAS_LIGHT.powerOn) {
-      console.log("Are we on? Yes.");
+//      console.log("Are we on? Yes.");
       callback(err, true);
     }
     else {
-      console.log("Are we on? No.");
+//      console.log("Are we on? No.");
       callback(err, false);
     }
   }); 

@@ -3,8 +3,6 @@ var Service = require('../').Service;
 var Characteristic = require('../').Characteristic;
 var uuid = require('../').uuid;
 
-var Temp = 0.0;
-
 ////////////////CHANGE THESE SETTINGS TO MATCH YOUR SETUP BEFORE RUNNING!!!!!!!!!!!!!//////////////////////////
 ////////////////CHANGE THESE SETTINGS TO MATCH YOUR SETUP BEFORE RUNNING!!!!!!!!!!!!!//////////////////////////
 var name = "Attic Temp Sensor";
@@ -24,18 +22,13 @@ var options = {
   clientId: 'DF_AtticTempSensor'
 };
 var client = mqtt.connect(options);
-client.subscribe(tempTopic);
-client.on('message', function(topic, message) {
-//  console.log(parseFloat(message));
-  Temp = ((parseFloat(message) - 32) / 1.8);  
-});
 
 // here's the temperature sensor device that we'll expose to HomeKit
 var TEMP_SENSOR = {
-
+  currentTemperature: 10,
   getTemperature: function() { 
 //    console.log("Getting the current temperature!");
-    return parseFloat(Temp); 
+    return TEMP_SENSOR.currentTemperature; 
   }
 }
 
@@ -68,7 +61,13 @@ sensor
 // temperature reading every 2 seconds
 setInterval(function() {
   
-  TEMP_SENSOR.getTemperature();
+    client.subscribe(tempTopic);
+    client.on('message', function(topic, message) {
+    //  console.log(parseFloat(message));
+    TEMP_SENSOR.currentTemperature = ((parseFloat(message) - 32) / 1.8);  
+    });
+
+  //TEMP_SENSOR.getTemperature();
   
   // update the characteristic value so interested iOS devices can get notified
   sensor
